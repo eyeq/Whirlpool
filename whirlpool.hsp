@@ -1,0 +1,70 @@
+
+isLoop = 0
+
+#const rad 3.1416 / 180
+
+angleStr = "89.0"
+stepStr = "1.0"
+
+goto *start
+
+stop
+
+*draw
+	color 255, 255, 255
+	boxf 0, 0, ginfo(12), ginfo(13)
+	color 0, 0, 0
+	
+	angle = absf(double(angleStr)) \ 180
+	if angle < 30 {
+		angle = 30.0
+	} else {
+		angle = double(int(angle * 10)) / 10.0
+	}
+	step = double(stepStr)
+	if step < 0.5 {
+		step = 0.5
+	} else {
+		if 10 < step {
+			step = 10.0
+		} else {
+			step = double(int(step * 10)) / 10.0
+		}
+	}
+	
+	len = 100.0
+	ang = 0.0
+	
+	posy = ginfo(13) - 50.0
+	posx = (ginfo(12) - len) / 2.0
+	
+	while(10.0 < len)
+		leny = len * sin(ang * rad)
+		lenx = len * cos(ang * rad)
+		line posx, posy, posx + lenx, posy - leny
+		
+		posy -= leny
+		posx += lenx
+		ang += angle
+		
+		len -= step
+	wend
+	return
+
+*play
+	isLoop = 0
+	gosub *draw
+	
+	stop
+
+*start
+	if isLoop : isLoop = 0 : else : isLoop = 1
+	
+	while isLoop
+		gosub *draw
+		
+		await(100)
+	
+		angleStr = strf("%.1f", angle + 1)
+	wend
+	stop
